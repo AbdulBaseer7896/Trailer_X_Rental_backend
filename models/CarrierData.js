@@ -13,10 +13,13 @@ const CarrierDataSchema = new mongoose.Schema({
     W9File: { type: String, default: "None" },       // Field for W9 file path
     isActive: {
         type: String,
-        enum : ["active" , "inActive"],
+        enum: ["active", "inActive"],
         default: "active"
-    }       // Field for Notice of Violation file path
+    }
+}, {
+    timestamps: true // This enables `createdAt` and `updatedAt` fields
 });
 
 // Properly export the Carrier model
 module.exports = mongoose.model('Carrier', CarrierDataSchema);
+
