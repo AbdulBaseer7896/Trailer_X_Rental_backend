@@ -5,13 +5,16 @@ const express = require("express");
 const User = require("./routes/user");
 const MCnumber = require("./routes/mcNumber");
 const test = require("./routes/test");
+const cors = require('cors');
 
 const app = express();
-
-
-const cors = require('cors');
 // app.use(cors());
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+  origin: 'https://freightxrental.com', // Your React app's origin
+  // origin: 'http://localhost:3001', // Your React app's origin
+  credentials: true
+}));
 app.use('/uploads', express.static('uploads'));
 
 
