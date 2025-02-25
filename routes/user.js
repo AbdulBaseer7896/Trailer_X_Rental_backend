@@ -9,7 +9,8 @@ const Carrier = require('../models/CarrierData');  // Import the Carrier model
 const express = require('express');
 const multer = require('multer');
 
-
+const fs = require('fs');
+const path = require('path');
 
 // // Sign Up
 // router.post("/sign-up", async (req, res) => {
@@ -170,6 +171,43 @@ router.post('/CarrierData', upload.fields([
 });
 
 
+
+// Updated DELETE route
+router.delete('/carriersData/:id', authenticateToken, async (req, res) => {
+    try {
+        const carrier = await Carrier.findById(req.params.id);
+        if (!carrier) {
+            return res.status(404).json({ message: 'Carrier not found' });
+        }
+
+        // Helper function to delete files
+        const deleteFile = (filePath) => {
+            if (filePath) {
+                const fullPath = path.join(__dirname, '..', filePath);
+                if (fs.existsSync(fullPath)) {
+                    fs.unlinkSync(fullPath);
+                }
+            }
+        };
+
+        // Delete associated files
+        deleteFile(carrier.COLFile);
+        deleteFile(carrier.W9File);
+        deleteFile(carrier.NOVFile);
+        deleteFile(carrier.MCAuthFile);
+
+        // Delete database record
+        await Carrier.findByIdAndDelete(req.params.id);
+
+        res.status(200).json({ message: 'Carrier deleted successfully' });
+    } catch (error) {
+        console.error('Delete error:', error);
+        res.status(500).json({ 
+            message: 'Error deleting carrier',
+            error: error.message 
+        });
+    }
+});
 
 
 // // POST route to save the carrier data
